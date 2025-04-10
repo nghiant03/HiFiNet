@@ -4,8 +4,6 @@ from typing import Dict, List, Union
 from abc import ABC, abstractmethod
 
 class BaseFault(ABC):
-    """Base class for all fault types"""
-    
     def __init__(self, chance: float, params: Dict[str, float]):
         self.params = params
         self.chance = chance
@@ -20,7 +18,6 @@ class BaseFault(ABC):
 class InstantFault(BaseFault):
     
     def _calculate_fault_indices(self, data: pd.DataFrame) -> List[int]:
-        """Calculate random indices to inject faults into"""
         target_points = self._calculate_target_points(data)
         target_points = min(target_points, len(data))
         
@@ -64,7 +61,6 @@ class PeriodFault(BaseFault):
         self.min_duration = min_duration
 
     def _calculate_fault_periods(self, data: pd.DataFrame) -> List[List[int]]:
-        """Calculate periods of indices to inject faults into"""
         target_points = self._calculate_target_points(data)
         current_points = 0
         faulty_indices = set()
@@ -113,7 +109,6 @@ class PeriodFault(BaseFault):
         return self._group_indices_into_periods(sorted(faulty_indices))
     
     def _group_indices_into_periods(self, sorted_indices: List[int]) -> List[List[int]]:
-        """Group consecutive indices into periods"""
         periods = []
         current_period = []
 

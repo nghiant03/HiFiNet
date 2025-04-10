@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from typing import Union, List, Optional
 
-from .base_fault import InstantFault, PeriodFault
+from src.fault.base_fault import InstantFault, PeriodFault
 
 class HardoverFault(InstantFault):
     """
@@ -15,11 +15,9 @@ class HardoverFault(InstantFault):
         super().__init__(chance, {'bias_value': bias_value})
     
     def _apply_to_point(self, point: pd.Series, col: List[str]) -> pd.Series:
-        """Apply hard-over fault to a single data point"""
         result = point.copy()
         result[col] += self.params['bias_value']
         return result
-
 
 class DriftFault(PeriodFault):
     """
@@ -37,7 +35,6 @@ class DriftFault(PeriodFault):
         super().__init__(max_duration, min_duration, chance, {'initial_bias': initial_bias})
     
     def _apply_to_period(self, period_data: pd.DataFrame, col: List[str]) -> pd.DataFrame:
-        """Apply drift fault to a period of data"""
         result = period_data.copy()
         n_points = len(result)
         
@@ -63,7 +60,6 @@ class SpikeFault(InstantFault):
         self.eta = max(2, eta)
     
     def _calculate_fault_indices(self, data: pd.DataFrame) -> List[int]:
-        """Override to ensure spikes occur at intervals specified by eta"""
         target_points = self._calculate_target_points(data)
         target_points = min(target_points, len(data) // self.eta)
         
@@ -81,7 +77,6 @@ class SpikeFault(InstantFault):
         return sorted(faulty_indices)
     
     def _apply_to_point(self, point: pd.Series, col: List[str]) -> pd.Series:
-        """Apply spike fault to a single data point"""
         result = point.copy()
         result[col] += self.spike_value
         return result
@@ -101,13 +96,6 @@ class ErraticFault(PeriodFault):
             chance: float, 
             variance_multiplier: float
         ):
-        """
-        Args:
-            max_duration: Maximum duration of erratic period
-            min_duration: Minimum duration of erratic period
-            chance: Probability of a period being affected
-            variance_multiplier: How much higher the variance should be compared to normal (δ² >> δ²_normal)
-        """
         super().__init__(max_duration, min_duration, chance, {'variance_multiplier': variance_multiplier})
         self.variance_multiplier = variance_multiplier
         self._column_variances = {}
@@ -138,18 +126,10 @@ class StuckFault(PeriodFault):
             chance: float, 
             stuck_value: Optional[float] = None
         ):
-        """
-        Args:
-            max_duration: Maximum duration of stuck period
-            min_duration: Minimum duration of stuck period
-            chance: Probability of a period being affected
-            stuck_value: Value to which signal gets stuck. If None, uses first value of period.
-        """
         params = {'stuck_value': stuck_value} if stuck_value else {}
         super().__init__(max_duration, min_duration, chance, params)
     
     def _apply_to_period(self, period_data: pd.DataFrame, col: List[str]) -> pd.DataFrame:
-        """Apply stuck fault to a period of data"""
         result = period_data.copy()
         
         value = self.params['stuck_value'] if 'stuck_value' in self.params else result[col].iloc[0].item()

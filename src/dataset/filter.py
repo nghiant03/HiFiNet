@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import List, Union
+from typing import List, Optional, Union
 
 def filter_by_moteid(data, motes: List[str]) -> pd.DataFrame:
     filtered_data = []
@@ -16,7 +16,7 @@ def filter_by_moteid(data, motes: List[str]) -> pd.DataFrame:
 
     return filtered_data.reset_index(inplace=False, drop=True)
 
-def filter_by_time_period(data, start_time: Union[pd.Timestamp, str], end_time:Union[pd.Timestamp, str]) -> pd.DataFrame:
+def filter_by_time(data, start_time: Optional[Union[pd.Timestamp, str]] = None, end_time: Optional[Union[pd.Timestamp, str]] = None) -> pd.DataFrame:
     if isinstance(start_time, str):
         start_time = pd.to_datetime(start_time)
     if isinstance(end_time, str):
