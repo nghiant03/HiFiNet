@@ -1,0 +1,17 @@
+[project]
+name = "HiFiNet"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Nguyen Tri Nghia", email = "nghiant@mailbox.org"},
+]
+dependencies = [
+	"hydra_zen",
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
