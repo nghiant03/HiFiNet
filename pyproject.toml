@@ -7,11 +7,21 @@ authors = [
 ]
 dependencies = [
 	"hydra_zen",
+	"pandas",
+	"numpy",
+	"typer",
+	"loguru"
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 
 
 [tool.pdm]
-distribution = false
+distribution = true
+
+[tool.pdm.build]
+include = "hifinet/"
+
+[project.scripts]
+hifinet = "src.cli:app"

@@ -3,6 +3,7 @@ import pandas as pd
 from abc import ABC, abstractmethod
 from numpy.typing import NDArray
 from typing import List, Union, Any, TypeVar, Generic
+from loguru import logger
 
 TTarget = TypeVar("TTarget")
 
@@ -36,6 +37,9 @@ class BaseFault(ABC, Generic[TTarget]):
     def apply(
         self, data: pd.DataFrame, type_index: int, target_cols: Union[str, List[str]]
     ) -> pd.DataFrame:
+        assert data[target_cols].isnull().any().any(), f"Null values found in target_cols: {target_cols}"
+        logger.info(f"Applying fault {type_index} to dataframe.")
+
         result = data.copy()
         result["type"] = 0
         result["type"] = result["type"].astype("int16")
@@ -53,6 +57,7 @@ class BaseFault(ABC, Generic[TTarget]):
 class InstantFault(BaseFault[int]):
     def select_targets(self, data: pd.DataFrame) -> NDArray[Any]:
         num_points = self._num_points(data)
+        logger.info(f"Total {num_points} points to be injected.")
 
         fault_points = self._rng.choice(data.index, size=num_points, replace=False)
         return fault_points
@@ -64,8 +69,11 @@ class InstantFault(BaseFault[int]):
         columns: List[str],
         type_index: int,
     ) -> pd.Series:
+        logger.debug(f"Target type: {type(target)}")
         target_slice = result.iloc[target].copy()
         random_value = self._sample_random()
+
+        logger.debug(f"Random value: {random_value}")
         for column in columns:
             target_slice[column] = self._transform_point(target_slice, column, random_value)
         target_slice["type"] = type_index
@@ -103,6 +111,7 @@ class IntervalFault(BaseFault[NDArray[np.uint16]]):
 
     def select_targets(self, data: pd.DataFrame) -> NDArray[np.uint16]:
         num_points = self._num_points(data)
+        logger.info(f"Total {num_points} points to be injected.")
 
         candidates = np.arange(len(data))
 

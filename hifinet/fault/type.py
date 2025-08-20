@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from typing import List, Optional
 
-from src.fault.base import InstantFault, IntervalFault
+from hifinet.fault.base import InstantFault, IntervalFault
 
 class HardoverFault(IntervalFault):
     def __init__(self, min_length: int, max_length: int, gap: int, bias_range: List[float], chance: float, seed: int):
