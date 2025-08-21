@@ -3,20 +3,25 @@ from pathlib import Path
 from typing import Optional
 from loguru import logger
 
-from hifinet.adapter.base import BaseAdaptor
+from hifinet.adapter.base import BaseAdaptor, AdaptorConfig
 
 DEFAULT_PATH = Path.cwd() / "data/intel/data.txt"
+DEFAULT_CONFIG = AdaptorConfig(
+    path=DEFAULT_PATH,
+)
+
 class IntelAdaptor(BaseAdaptor):
     def __init__(self, path: Optional[str] = None):
         super().__init__(Path(path) if path else DEFAULT_PATH)
             
     def read(self) -> pd.DataFrame:
-        logger.info(f"Reading data at path {Path}")
+        logger.info(f"Reading data at path {self.path}")
         columns = ["date", "time", "epoch", "moteid", "temperature", "humidity", "light", "voltage"]
         data = pd.read_csv(self.path, sep= " ", names=columns)
 
         data["datetime"] = pd.to_datetime(data["date"] + " " + data["time"], format="mixed")
         data.drop(columns=["date", "time"], inplace=True)
+        data.sort_values(["datetime"])
         logger.info(f"Dataframe loaded with shape {data.shape}")
 
         return data

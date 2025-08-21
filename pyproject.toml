@@ -6,11 +6,11 @@ authors = [
     {name = "Nguyen Tri Nghia", email = "nghiant@mailbox.org"},
 ]
 dependencies = [
-	"hydra_zen",
 	"pandas",
 	"numpy",
 	"typer",
-	"loguru"
+	"loguru",
+	"pydantic-settings",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
@@ -20,8 +20,8 @@ license = "MIT"
 [tool.pdm]
 distribution = true
 
-[tool.pdm.build]
-include = "hifinet/"
+[tool.setuptools.packages.find]
+include = ["hifinet"]
 
 [project.scripts]
-hifinet = "src.cli:app"
+hifinet = "hifinet.cli:app"
