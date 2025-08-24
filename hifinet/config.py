@@ -1,6 +1,5 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Union
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -79,13 +78,13 @@ class StuckFaultConfig(_IntervalParams):
     )
 
 
-FaultConfig = Union[
-    HardoverFaultConfig,
-    DriftFaultConfig,
-    SpikeFaultConfig,
-    ErraticFaultConfig,
-    StuckFaultConfig,
-]
+FaultConfig = (
+    HardoverFaultConfig
+    | DriftFaultConfig
+    | SpikeFaultConfig
+    | ErraticFaultConfig
+    | StuckFaultConfig
+)
 
 
 class InjectorConfig(BaseModel):
