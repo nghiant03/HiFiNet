@@ -40,6 +40,7 @@ class IntelAdaptor(BaseAdaptor):
             "voltage",
         ]
         data = pd.read_csv(self.config.path, sep=" ", names=columns)
+        data.drop(columns="epoch", inplace=True)
 
         data.dropna(subset=["date", "time", "moteid"], inplace=True)
         data["datetime"] = pd.to_datetime(
