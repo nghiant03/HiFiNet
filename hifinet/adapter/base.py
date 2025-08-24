@@ -87,3 +87,6 @@ class DataSchema(pa.DataFrameModel):
     def node_same_length(cls, df: pd.DataFrame) -> bool:
         sizes = df.groupby("node_id").size()
         return sizes.nunique() <= 1
+
+    class Config:
+        strict = True

@@ -18,6 +18,10 @@ directories inside `data/`. The injecting command for each will then be simply:
 hifinet inject intel
 hifinet inject merra2
 ```
+The injection functionality can be used with any dataset `.csv` file. The data need to be in the following schema:
+- `node_id` column: Unique ID for each node of the WSN
+- `target` column: The target feature needed to be injected
+- `feature`/`feature_*` columns: The additional features presented in the data
 See the available option to configure the injection functionality:
 ```bash
 hifinet inject --help
