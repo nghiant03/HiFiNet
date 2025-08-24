@@ -38,6 +38,9 @@ The injection functionality can be used with any dataset `.csv` file. The data n
 - `node_id` column: Unique ID for each node of the WSN
 - `target` column: The target feature needed to be injected
 - `feature`/`feature_*` columns: The additional features presented in the data
+```bash
+hifinet inject path/to/dataset
+```
 See the available option to configure the injection functionality:
 ```bash
 hifinet inject --help
