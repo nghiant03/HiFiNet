@@ -3,6 +3,7 @@ import pandera.pandas as pa
 from loguru import logger
 from typing import Optional
 from abc import ABC, abstractmethod
+from pandera.api.pandas.model_config import BaseConfig
 
 from hifinet.config import AdaptorConfig
 
@@ -88,5 +89,5 @@ class DataSchema(pa.DataFrameModel):
         sizes = df.groupby("node_id").size()
         return sizes.nunique() <= 1
 
-    class Config:
+    class Config(BaseConfig):
         strict = True

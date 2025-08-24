@@ -17,6 +17,10 @@ Navigate to the repo directory. Then install the repo as a package with:
 cd HiFiNet
 pdm install
 ```
+*Optional*: Install linting and lsp depedencies for using type check. HiFiNet repo is strongly linted and type hinted:
+```bash
+pdm install -G:all
+```
 
 ## Usage
 HiFiNet experiments can be run using the intergrated CLI.
