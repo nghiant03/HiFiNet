@@ -1,10 +1,22 @@
 # HiFiNet: Hierarchical Fault Identification in Wireless Sensor Networks via Edge‑Based Classification and Graph Aggregation
 
-## Installation
+## Dependencies
 
 - Python
 - Pip
 - [PDM](https://github.com/pdm-project/pdm)
+
+## Installation
+
+Clone the repo:
+```bash
+git clone https://github.com/nghiant03/HiFiNet
+```
+Navigate to the repo directory. Then install the repo as a package with:
+```bash
+cd HiFiNet
+pdm install
+```
 
 ## Usage
 HiFiNet experiments can be run using the intergrated CLI.
