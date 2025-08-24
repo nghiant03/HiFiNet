@@ -16,27 +16,39 @@ DEFAULT_CONFIG = AdaptorConfig(
         "temperature": "target",
         "humidity": "feature_1",
         "light": "feature_2",
-        "voltage": "feature_3"
-    }
+        "voltage": "feature_3",
+    },
 )
+
 
 class IntelAdaptor(BaseAdaptor):
     def __init__(self, config: AdaptorConfig = DEFAULT_CONFIG):
         super().__init__(config)
-            
+
     def read(self) -> pd.DataFrame:
         logger.debug(f"Current adaptor config: {self.config}")
         logger.info(f"Reading data at path {self.config.path}")
-        columns = ["date", "time", "epoch", "moteid", "temperature", "humidity", "light", "voltage"]
-        data = pd.read_csv(self.config.path, sep= " ", names=columns)
+        columns = [
+            "date",
+            "time",
+            "epoch",
+            "moteid",
+            "temperature",
+            "humidity",
+            "light",
+            "voltage",
+        ]
+        data = pd.read_csv(self.config.path, sep=" ", names=columns)
 
         data.dropna(subset=["date", "time", "moteid"], inplace=True)
-        data["datetime"] = pd.to_datetime(data["date"] + " " + data["time"], format="mixed")
+        data["datetime"] = pd.to_datetime(
+            data["date"] + " " + data["time"], format="mixed"
+        )
         data.drop(columns=["date", "time"], inplace=True)
         data["moteid"] = data["moteid"].astype("uint16")
         data.sort_values(["datetime", "moteid"], inplace=True)
         logger.info(f"Dataframe loaded with shape {data.shape}")
-        
+
         data.rename(columns=self.config.rename_columns, inplace=True)
 
         logger.info("Processing data")

@@ -2,6 +2,8 @@ from loguru import logger
 from hifinet.adapter.intel import IntelAdaptor
 
 ADAPTORS = {"intel": IntelAdaptor}
+
+
 def load_data(dataset: str):
     logger.info(f"Loading {dataset} dataset")
 

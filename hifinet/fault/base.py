@@ -7,6 +7,7 @@ from loguru import logger
 
 TTarget = TypeVar("TTarget")
 
+
 class BaseFault(ABC, Generic[TTarget]):
     def __init__(self, chance: float, seed: int):
         self.chance = chance
@@ -42,7 +43,9 @@ class BaseFault(ABC, Generic[TTarget]):
         if isinstance(target_cols, str):
             target_cols = [target_cols]
 
-        assert not data[target_cols].isnull().any().any(), f"Null values found in target_cols: {target_cols}"
+        assert not data[target_cols].isnull().any().any(), (
+            f"Null values found in target_cols: {target_cols}"
+        )
         logger.info(f"Applying fault {self.__class__} to data")
 
         result = data.copy()
@@ -57,6 +60,7 @@ class BaseFault(ABC, Generic[TTarget]):
 
         return result
 
+
 class InstantFault(BaseFault[int]):
     def select_targets(self, data: pd.DataFrame) -> NDArray[Any]:
         num_points = self._num_points(data)
@@ -69,10 +73,7 @@ class InstantFault(BaseFault[int]):
         return slice(target, target + 1)
 
     def transform_slice(
-        self,
-        result: pd.DataFrame,
-        target_slice: slice,
-        columns: List[str]
+        self, result: pd.DataFrame, target_slice: slice, columns: List[str]
     ) -> pd.DataFrame:
         logger.debug(f"Target slice: {target_slice}")
         data_slice = result.iloc[target_slice].copy()
@@ -84,11 +85,16 @@ class InstantFault(BaseFault[int]):
         return data_slice
 
     @abstractmethod
-    def transform_point(self, fault_point: pd.DataFrame, target_col: str, random_value: float) -> pd.Series:
+    def transform_point(
+        self, fault_point: pd.DataFrame, target_col: str, random_value: float
+    ) -> pd.Series:
         raise NotImplementedError
 
+
 class IntervalFault(BaseFault[NDArray[np.int64]]):
-    def __init__(self, min_length: int, max_length: int, gap: int, chance: float, seed: int):
+    def __init__(
+        self, min_length: int, max_length: int, gap: int, chance: float, seed: int
+    ):
         super().__init__(chance, seed)
         self.min_length = min_length
         self.max_length = max_length
@@ -105,11 +111,15 @@ class IntervalFault(BaseFault[NDArray[np.int64]]):
         random_value = self.sample_random()
         logger.debug(f"Random value: {random_value}")
         for column in columns:
-            data_slice[column] = self.transform_interval(data_slice, column, random_value)
+            data_slice[column] = self.transform_interval(
+                data_slice, column, random_value
+            )
         return data_slice
 
     @abstractmethod
-    def transform_interval(self, fault_interval: pd.DataFrame, target_col: str, random_value: float) -> pd.Series:
+    def transform_interval(
+        self, fault_interval: pd.DataFrame, target_col: str, random_value: float
+    ) -> pd.Series:
         raise NotImplementedError
 
     def select_targets(self, data: pd.DataFrame) -> NDArray[np.int64]:
@@ -126,7 +136,7 @@ class IntervalFault(BaseFault[NDArray[np.int64]]):
         for start in candidates:
             if placed > num_points:
                 break
-            
+
             max_fit = self._try_start(start, data, unavailable)
             if max_fit == -1:
                 continue
@@ -139,7 +149,7 @@ class IntervalFault(BaseFault[NDArray[np.int64]]):
             placed += length
 
         return intervals
-    
+
     def _try_start(self, start, data, unavailable) -> int:
         if unavailable[start]:
             return -1
@@ -150,7 +160,9 @@ class IntervalFault(BaseFault[NDArray[np.int64]]):
             return -1
 
         end = start
-        while end < len(data) and not unavailable[end] and (end - start) < self.max_length:
+        while (
+            end < len(data) and not unavailable[end] and (end - start) < self.max_length
+        ):
             end += 1
 
         max_fit = end - start
@@ -159,7 +171,7 @@ class IntervalFault(BaseFault[NDArray[np.int64]]):
             return -1
 
         return max_fit
-    
+
     def _mark_unavailable(self, unavailable, start, length):
         left = max(0, start - self.gap)
         right = min(len(unavailable), start + length + self.gap)

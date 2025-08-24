@@ -7,6 +7,7 @@ from pandera.api.pandas.model_config import BaseConfig
 
 from hifinet.config import AdaptorConfig
 
+
 class BaseAdaptor(ABC):
     def __init__(self, config: AdaptorConfig):
         self.config = config
@@ -27,17 +28,22 @@ class BaseAdaptor(ABC):
 
         filter_data = data.copy()
 
-        filter_data = filter_data[filter_data["node_id"].isin(self.config.subset_node)].copy()
-        
+        filter_data = filter_data[
+            filter_data["node_id"].isin(self.config.subset_node)
+        ].copy()
+
         return filter_data
 
     def _filter_by_period(self, data: pd.DataFrame) -> pd.DataFrame:
         if not self.config.period:
             return data
 
-        filter_data = data.copy() 
-        
-        filter_data = filter_data[(filter_data["datetime"] >= self.config.period[0]) & (filter_data["datetime"] <= self.config.period[1])].copy()
+        filter_data = data.copy()
+
+        filter_data = filter_data[
+            (filter_data["datetime"] >= self.config.period[0])
+            & (filter_data["datetime"] <= self.config.period[1])
+        ].copy()
 
         return filter_data
 
@@ -48,41 +54,47 @@ class BaseAdaptor(ABC):
         resampled_list = []
         unique_nodes = data["node_id"].unique()
 
-
         for node in unique_nodes:
             note_data = data[data["node_id"] == node].copy()
             note_data = note_data.set_index("datetime")
 
             nums_nan = note_data["target"].isna().sum()
-            logger.debug(f"Node {node}: Found {nums_nan} NaN values in target before resampling")
-            
+            logger.debug(
+                f"Node {node}: Found {nums_nan} NaN values in target before resampling"
+            )
+
             resampled_mote = note_data.resample(self.config.resample_interval).mean()
             resampled_mote["node_id"] = node
-            
+
             nums_nan = resampled_mote["target"].isna().sum()
 
-            logger.debug(f"Node {node}: Found {nums_nan} NaN values in target after resampling, before interpolation")
+            logger.debug(
+                f"Node {node}: Found {nums_nan} NaN values in target after resampling, before interpolation"
+            )
 
             resampled_mote["target"] = resampled_mote["target"].interpolate("time")
 
             nums_nan = resampled_mote["target"].isna().sum()
 
-            logger.debug(f"Node {node}: Found {nums_nan} NaN values in target after interpolation")
+            logger.debug(
+                f"Node {node}: Found {nums_nan} NaN values in target after interpolation"
+            )
 
             resampled_mote = resampled_mote.reset_index()
             resampled_list.append(resampled_mote)
-        
+
         resampled_data = pd.concat(resampled_list, ignore_index=True)
 
         return resampled_data
-
 
 
 class DataSchema(pa.DataFrameModel):
     datetime: pa.Timestamp = pa.Field(nullable=False, coerce=True)
     node_id: int = pa.Field(nullable=False, coerce=True)
     target: float = pa.Field(nullable=False, coerce=True)
-    feature: Optional[float] = pa.Field(regex=True, nullable=True, alias=r"^feature(?:_\d+)?$", coerce=True)
+    feature: Optional[float] = pa.Field(
+        regex=True, nullable=True, alias=r"^feature(?:_\d+)?$", coerce=True
+    )
 
     @pa.dataframe_check
     def node_same_length(cls, df: pd.DataFrame) -> bool:

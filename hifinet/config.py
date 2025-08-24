@@ -12,6 +12,7 @@ class AdaptorConfig(BaseModel):
     resample_interval: Optional[str] = None
     rename_columns: Optional[Dict[str, str]] = None
 
+
 class _IntervalParams(BaseModel):
     min_length: int
     max_length: int
@@ -26,6 +27,7 @@ class _IntervalParams(BaseModel):
         if self.max_length < self.min_length:
             raise ValueError("max_length must be >= min_length")
         return self
+
 
 class HardoverFaultConfig(_IntervalParams):
     bias_range: List[float]
@@ -42,9 +44,11 @@ class HardoverFaultConfig(_IntervalParams):
             raise ValueError("bias_range must satisfy low < high")
         return v
 
+
 class DriftFaultConfig(_IntervalParams):
     sigma: float = Field(gt=0)
     min_drift: float = Field(ge=0)
+
 
 class SpikeFaultConfig(BaseModel):
     bias_range: List[float]
@@ -63,14 +67,17 @@ class SpikeFaultConfig(BaseModel):
             raise ValueError("bias_range must satisfy low < high")
         return v
 
+
 class ErraticFaultConfig(_IntervalParams):
     min_multiplier: float = Field(ge=1.0)
     scale: float = Field(gt=0)
+
 
 class StuckFaultConfig(_IntervalParams):
     stuck_value: Optional[float] = Field(
         None,
     )
+
 
 FaultConfig = Union[
     HardoverFaultConfig,
@@ -80,11 +87,19 @@ FaultConfig = Union[
     StuckFaultConfig,
 ]
 
+
 class InjectorConfig(BaseModel):
     fault_config: Dict[str, FaultConfig]
-    type_mapping: Dict[str, int] = {"hardover": 1, "drift": 2, "spike": 3, "erratic": 4, "stuck": 5}
+    type_mapping: Dict[str, int] = {
+        "hardover": 1,
+        "drift": 2,
+        "spike": 3,
+        "erratic": 4,
+        "stuck": 5,
+    }
     mode: str = "singular"
     exclude: Optional[List[int]] = None
+
 
 DEFAULT_HARDOVER = HardoverFaultConfig(
     min_length=5,
@@ -126,10 +141,12 @@ DEFAULT_STUCK = StuckFaultConfig(
 )
 
 
-NAME_CONFIG_MAPPING = {
-    "hardover": DEFAULT_HARDOVER,
-    "drift": DEFAULT_DRIFT,
-    "spike": DEFAULT_SPIKE,
-    "erratic": DEFAULT_ERRATIC,
-    "stuck": DEFAULT_STUCK,
-},
+NAME_CONFIG_MAPPING = (
+    {
+        "hardover": DEFAULT_HARDOVER,
+        "drift": DEFAULT_DRIFT,
+        "spike": DEFAULT_SPIKE,
+        "erratic": DEFAULT_ERRATIC,
+        "stuck": DEFAULT_STUCK,
+    },
+)
