@@ -77,4 +77,13 @@ class BaseAdaptor(ABC):
 
 
 
+class DataSchema(pa.DataFrameModel):
+    datetime: pa.Timestamp = pa.Field(nullable=False, coerce=True)
+    node_id: int = pa.Field(nullable=False, coerce=True)
+    target: float = pa.Field(nullable=False, coerce=True)
+    feature: Optional[float] = pa.Field(regex=True, nullable=True, alias=r"^feature(?:_\d+)?$", coerce=True)
 
+    @pa.dataframe_check
+    def node_same_length(cls, df: pd.DataFrame) -> bool:
+        sizes = df.groupby("node_id").size()
+        return sizes.nunique() <= 1
