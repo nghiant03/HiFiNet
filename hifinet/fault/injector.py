@@ -1,5 +1,6 @@
 import pandas as pd
 from loguru import logger
+
 from hifinet.config import InjectorConfig
 from hifinet.fault.type import (
     DriftFault,
@@ -60,7 +61,7 @@ class FaultInjector:
                 type_list = list(self.config.type_mapping.items())
                 for idx, node_id in enumerate(node_ids):
                     node_data = (
-                        data[["node_id"] == node_id].copy().reset_index(drop=True)
+                        data[node_id == ["node_id"]].copy().reset_index(drop=True)
                     )
                     fault_name, type_idx = type_list[idx % len(type_list)]
                     fault_class = NAME_MAPPING[fault_name]

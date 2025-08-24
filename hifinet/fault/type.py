@@ -1,6 +1,6 @@
+
 import numpy as np
 import pandas as pd
-from typing import List, Optional
 
 from hifinet.fault.base import InstantFault, IntervalFault
 
@@ -11,7 +11,7 @@ class HardoverFault(IntervalFault):
         min_length: int,
         max_length: int,
         gap: int,
-        bias_range: List[float],
+        bias_range: list[float],
         chance: float,
         seed: int,
     ):
@@ -67,7 +67,7 @@ class DriftFault(IntervalFault):
 
 
 class SpikeFault(InstantFault):
-    def __init__(self, bias_range: List[float], chance: float, seed: int):
+    def __init__(self, bias_range: list[float], chance: float, seed: int):
         super().__init__(chance, seed)
         self.bias_range = bias_range
 
@@ -120,7 +120,7 @@ class ErraticFault(IntervalFault):
 class StuckFault(IntervalFault):
     def __init__(
         self,
-        stuck_value: Optional[float],
+        stuck_value: float | None,
         min_length: int,
         max_length: int,
         gap: int,

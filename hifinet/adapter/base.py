@@ -1,8 +1,8 @@
+from abc import ABC, abstractmethod
+
 import pandas as pd
 import pandera.pandas as pa
 from loguru import logger
-from typing import Optional
-from abc import ABC, abstractmethod
 from pandera.api.pandas.model_config import BaseConfig
 
 from hifinet.config import AdaptorConfig
@@ -92,7 +92,7 @@ class DataSchema(pa.DataFrameModel):
     datetime: pa.Timestamp = pa.Field(nullable=False, coerce=True)
     node_id: int = pa.Field(nullable=False, coerce=True)
     target: float = pa.Field(nullable=False, coerce=True)
-    feature: Optional[float] = pa.Field(
+    feature: float | None = pa.Field(
         regex=True, nullable=True, alias=r"^feature(?:_\d+)?$", coerce=True
     )
 

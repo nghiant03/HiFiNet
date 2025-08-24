@@ -1,22 +1,23 @@
 import json
+from pathlib import Path
+from typing import Annotated
+
 import typer
-from typing import Annotated, Optional, List
 from loguru import logger
-from rich.text import Text
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from pathlib import Path
+from rich.text import Text
 
-from hifinet.fault.injector import FaultInjector
 from hifinet.config import (
     DEFAULT_DRIFT,
     DEFAULT_ERRATIC,
     DEFAULT_HARDOVER,
-    DEFAULT_STUCK,
     DEFAULT_SPIKE,
+    DEFAULT_STUCK,
     NAME_CONFIG_MAPPING,
     InjectorConfig,
 )
+from hifinet.fault.injector import FaultInjector
 from hifinet.loader import load_data
 
 console = Console()
@@ -51,7 +52,7 @@ def inject(
         typer.Argument(help="The name of a default dataset or path to custom dataset"),
     ] = "intel",
     name_string: Annotated[
-        Optional[str], typer.Option("--output", help="Output file name")
+        str | None, typer.Option("--output", help="Output file name")
     ] = None,
     dir_string: Annotated[
         str, typer.Argument(help="Directory to output file")
@@ -60,11 +61,11 @@ def inject(
         float, typer.Argument(help="Percent of fault to be injected")
     ] = 0.2,
     exclude: Annotated[
-        Optional[List[int]], typer.Option(help="Node to exclude from injection")
+        list[int] | None, typer.Option(help="Node to exclude from injection")
     ] = None,
-    seed: Annotated[Optional[int], typer.Option(help="Random seed to set")] = None,
+    seed: Annotated[int | None, typer.Option(help="Random seed to set")] = None,
     fault_json: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--fault-config", help="Json string for fault type params"),
     ] = None,
     verbose: Annotated[

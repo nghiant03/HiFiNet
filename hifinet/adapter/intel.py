@@ -1,9 +1,10 @@
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 from loguru import logger
 from pandera.errors import SchemaErrors
 
-from hifinet.adapter.base import BaseAdaptor, AdaptorConfig, DataSchema
+from hifinet.adapter.base import AdaptorConfig, BaseAdaptor, DataSchema
 
 DEFAULT_PATH = Path.cwd() / "data/intel/data.txt"
 DEFAULT_CONFIG = AdaptorConfig(

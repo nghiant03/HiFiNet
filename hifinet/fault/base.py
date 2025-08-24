@@ -1,9 +1,10 @@
+from abc import ABC, abstractmethod
+from typing import Any, Generic, TypeVar
+
 import numpy as np
 import pandas as pd
-from abc import ABC, abstractmethod
-from numpy.typing import NDArray
-from typing import List, Union, Any, TypeVar, Generic
 from loguru import logger
+from numpy.typing import NDArray
 
 TTarget = TypeVar("TTarget")
 
@@ -33,12 +34,12 @@ class BaseFault(ABC, Generic[TTarget]):
         self,
         result: pd.DataFrame,
         target_slice: slice,
-        columns: List[str],
+        columns: list[str],
     ) -> pd.DataFrame:
         raise NotImplementedError
 
     def apply(
-        self, data: pd.DataFrame, target_cols: Union[str, List[str]], type_idx: int
+        self, data: pd.DataFrame, target_cols: str | list[str], type_idx: int
     ) -> pd.DataFrame:
         if isinstance(target_cols, str):
             target_cols = [target_cols]
@@ -73,7 +74,7 @@ class InstantFault(BaseFault[int]):
         return slice(target, target + 1)
 
     def transform_slice(
-        self, result: pd.DataFrame, target_slice: slice, columns: List[str]
+        self, result: pd.DataFrame, target_slice: slice, columns: list[str]
     ) -> pd.DataFrame:
         logger.debug(f"Target slice: {target_slice}")
         data_slice = result.iloc[target_slice].copy()
@@ -104,7 +105,7 @@ class IntervalFault(BaseFault[NDArray[np.int64]]):
         self,
         result: pd.DataFrame,
         target_slice: slice,
-        columns: List[str],
+        columns: list[str],
     ) -> pd.DataFrame:
         logger.debug(f"Target slice: {target_slice}")
         data_slice = result.iloc[target_slice].copy()

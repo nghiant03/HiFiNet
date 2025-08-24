@@ -1,16 +1,16 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
-from pydantic import BaseModel, Field, model_validator, field_validator
-from typing import Optional, Union
+from typing import Union
+
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class AdaptorConfig(BaseModel):
     path: Path
-    period: Optional[List[datetime]] = None
-    subset_node: Optional[List[int]] = None
-    resample_interval: Optional[str] = None
-    rename_columns: Optional[Dict[str, str]] = None
+    period: list[datetime] | None = None
+    subset_node: list[int] | None = None
+    resample_interval: str | None = None
+    rename_columns: dict[str, str] | None = None
 
 
 class _IntervalParams(BaseModel):
@@ -18,7 +18,7 @@ class _IntervalParams(BaseModel):
     max_length: int
     gap: int = Field(ge=0)
     chance: float = Field(ge=0.0, le=1.0)
-    seed: Optional[int] = None
+    seed: int | None = None
 
     @model_validator(mode="after")
     def _check_interval_params(self):
@@ -30,11 +30,11 @@ class _IntervalParams(BaseModel):
 
 
 class HardoverFaultConfig(_IntervalParams):
-    bias_range: List[float]
+    bias_range: list[float]
 
     @field_validator("bias_range")
     @classmethod
-    def _bias_range_two_positive(cls, v: List[float]) -> List[float]:
+    def _bias_range_two_positive(cls, v: list[float]) -> list[float]:
         if len(v) != 2:
             raise ValueError("bias_range must be length-2: [low, high]")
         low, high = v
@@ -51,13 +51,13 @@ class DriftFaultConfig(_IntervalParams):
 
 
 class SpikeFaultConfig(BaseModel):
-    bias_range: List[float]
+    bias_range: list[float]
     chance: float = Field(ge=0.0, le=1.0)
-    seed: Optional[int] = None
+    seed: int | None = None
 
     @field_validator("bias_range")
     @classmethod
-    def _bias_range_two_positive(cls, v: List[float]) -> List[float]:
+    def _bias_range_two_positive(cls, v: list[float]) -> list[float]:
         if len(v) != 2:
             raise ValueError("bias_range must be length-2: [low, high]")
         low, high = v
@@ -74,7 +74,7 @@ class ErraticFaultConfig(_IntervalParams):
 
 
 class StuckFaultConfig(_IntervalParams):
-    stuck_value: Optional[float] = Field(
+    stuck_value: float | None = Field(
         None,
     )
 
@@ -89,8 +89,8 @@ FaultConfig = Union[
 
 
 class InjectorConfig(BaseModel):
-    fault_config: Dict[str, FaultConfig]
-    type_mapping: Dict[str, int] = {
+    fault_config: dict[str, FaultConfig]
+    type_mapping: dict[str, int] = {
         "hardover": 1,
         "drift": 2,
         "spike": 3,
@@ -98,7 +98,7 @@ class InjectorConfig(BaseModel):
         "stuck": 5,
     }
     mode: str = "singular"
-    exclude: Optional[List[int]] = None
+    exclude: list[int] | None = None
 
 
 DEFAULT_HARDOVER = HardoverFaultConfig(
