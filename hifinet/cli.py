@@ -5,8 +5,6 @@ from rich.text import Text
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from hifinet.config import InjectConfig
-from hifinet.inject import inject_from_config
 
 
 console = Console()
@@ -32,8 +30,7 @@ def inject(
     ):
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), transient=True, console=console) as progress:
         progress.add_task(description="Injecting...", total=None)
-        config = InjectConfig(dataset=dataset, chance=chance, seed=seed)
-        data = inject_from_config(config)
+
 
 @app.command()
 def train():
