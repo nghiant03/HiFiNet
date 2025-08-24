@@ -10,7 +10,8 @@ dependencies = [
 	"numpy",
 	"typer",
 	"loguru",
-	"pydantic-settings",
+	"pydantic",
+	"pandera"
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
