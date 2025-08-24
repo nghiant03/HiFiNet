@@ -96,6 +96,7 @@ class DataSchema(pa.DataFrameModel):
         regex=True, nullable=True, alias=r"^feature(?:_\d+)?$", coerce=True
     )
 
+    @classmethod
     @pa.dataframe_check
     def node_same_length(cls, df: pd.DataFrame) -> bool:
         sizes = df.groupby("node_id").size()
