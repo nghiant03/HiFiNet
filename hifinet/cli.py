@@ -86,12 +86,19 @@ def inject(
         data = load_data(dataset)
 
         init_config = {
-            "hardover": DEFAULT_HARDOVER,
-            "drift": DEFAULT_DRIFT,
-            "erratic": DEFAULT_ERRATIC,
-            "spike": DEFAULT_SPIKE,
-            "stuck": DEFAULT_STUCK,
+            name: default.model_copy(
+                update={"seed": seed, "chance": chance},
+                deep=True,
+            )
+            for name, default in {
+                "hardover": DEFAULT_HARDOVER,
+                "drift": DEFAULT_DRIFT,
+                "erratic": DEFAULT_ERRATIC,
+                "spike": DEFAULT_SPIKE,
+                "stuck": DEFAULT_STUCK,
+            }.items()
         }
+
         if fault_json:
             fault_config = json.loads(fault_json)
             for fault_name, cli_overide in fault_config.items():
