@@ -17,7 +17,7 @@ from hifinet.config import (
     NAME_CONFIG_MAPPING,
     InjectorConfig,
 )
-from hifinet.fault.injector import FaultInjector
+from hifinet.fault import FaultInjector
 from hifinet.loader import load_data
 
 console = Console()
