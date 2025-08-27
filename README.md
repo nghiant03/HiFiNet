@@ -41,6 +41,21 @@ The injection functionality can be used with any dataset `.csv` file. The data n
 ```bash
 hifinet inject path/to/dataset
 ```
+To customize fault parameters, supply a JSON file via `--fault-config`:
+```bash
+hifinet inject path/to/dataset --fault-config path/to/config.json
+```
+`config.json` should map fault names (for example, `drift` or `spike`) to their parameter overrides:
+```json
+{
+  "drift": {"sigma": 0.02},
+  "spike": {"bias_range": [2.0, 4.0]}
+}
+```
+Inline JSON strings are supported for quick tweaks:
+```bash
+hifinet inject path/to/dataset --fault-config '{"drift": {"sigma": 0.02}}'
+```
 See the available option to configure the injection functionality:
 ```bash
 hifinet inject --help
