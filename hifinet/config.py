@@ -100,52 +100,52 @@ class InjectorConfig(BaseModel):
     exclude: list[int] | None = None
 
 
-DEFAULT_HARDOVER = HardoverFaultConfig(
-    min_length=5,
-    max_length=12,
-    gap=2,
-    chance=0.2,
-    bias_range=[7.0, 10.0],
-)
+CONFIG_CLASS_MAPPING = {
+    "hardover": HardoverFaultConfig,
+    "drift": DriftFaultConfig,
+    "spike": SpikeFaultConfig,
+    "erratic": ErraticFaultConfig,
+    "stuck": StuckFaultConfig,
+}
 
-DEFAULT_DRIFT = DriftFaultConfig(
-    min_length=5,
-    max_length=12,
-    gap=2,
-    chance=0.2,
-    sigma=0.01,
-    min_drift=0.1,
-)
+DEFAULT_HARDOVER = {
+    "min_length": 5,
+    "max_length": 12,
+    "gap": 2,
+    "bias_range": [7.0, 10.0],
+}
 
-DEFAULT_SPIKE = SpikeFaultConfig(
-    bias_range=[3.0, 5.0],
-    chance=0.2,
-)
+DEFAULT_DRIFT = {
+    "min_length": 5,
+    "max_length": 12,
+    "gap": 2,
+    "sigma": 0.01,
+    "min_drift": 0.1,
+}
 
-DEFAULT_ERRATIC = ErraticFaultConfig(
-    min_length=5,
-    max_length=12,
-    gap=2,
-    chance=0.2,
-    min_multiplier=1.5,
-    scale=0.1,
-)
+DEFAULT_SPIKE = {
+    "bias_range": [3.0, 5.0],
+}
 
-DEFAULT_STUCK = StuckFaultConfig(
-    min_length=5,
-    max_length=12,
-    gap=2,
-    chance=0.2,
-    stuck_value=None,
-)
+DEFAULT_ERRATIC = {
+    "min_length": 5,
+    "max_length": 12,
+    "gap": 2,
+    "min_multiplier": 1.5,
+    "scale": 0.1,
+}
 
+DEFAULT_STUCK = {
+    "min_length": 5,
+    "max_length": 12,
+    "gap": 2,
+    "stuck_value": None,
+}
 
-NAME_CONFIG_MAPPING = (
-    {
-        "hardover": DEFAULT_HARDOVER,
-        "drift": DEFAULT_DRIFT,
-        "spike": DEFAULT_SPIKE,
-        "erratic": DEFAULT_ERRATIC,
-        "stuck": DEFAULT_STUCK,
-    },
-)
+DEFAULT_CONFIG_MAPPING = {
+    "hardover": DEFAULT_HARDOVER,
+    "drift": DEFAULT_DRIFT,
+    "spike": DEFAULT_SPIKE,
+    "erratic": DEFAULT_ERRATIC,
+    "stuck": DEFAULT_STUCK,
+}

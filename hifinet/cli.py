@@ -8,15 +8,7 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.text import Text
 
-from hifinet.config import (
-    DEFAULT_DRIFT,
-    DEFAULT_ERRATIC,
-    DEFAULT_HARDOVER,
-    DEFAULT_SPIKE,
-    DEFAULT_STUCK,
-    NAME_CONFIG_MAPPING,
-    InjectorConfig,
-)
+from hifinet.config import CONFIG_CLASS_MAPPING, DEFAULT_CONFIG_MAPPING, InjectorConfig
 from hifinet.fault import FaultInjector
 from hifinet.loader import load_data
 
@@ -86,24 +78,17 @@ def inject(
         data = load_data(dataset)
 
         init_config = {
-            name: default.model_copy(
-                update={"seed": seed, "chance": chance},
-                deep=True,
+            name: CONFIG_CLASS_MAPPING[name](
+                **{**params, "seed": seed, "chance": chance}
             )
-            for name, default in {
-                "hardover": DEFAULT_HARDOVER,
-                "drift": DEFAULT_DRIFT,
-                "erratic": DEFAULT_ERRATIC,
-                "spike": DEFAULT_SPIKE,
-                "stuck": DEFAULT_STUCK,
-            }.items()
+            for name, params in DEFAULT_CONFIG_MAPPING.items()
         }
 
         if fault_json:
             fault_config = json.loads(fault_json)
             for fault_name, cli_overide in fault_config.items():
                 config = {**init_config[fault_name].model_dump(), **cli_overide}
-                init_config[fault_name] = NAME_CONFIG_MAPPING[fault_name](**config)
+                init_config[fault_name] = CONFIG_CLASS_MAPPING[fault_name](**config)
 
         injector_config = InjectorConfig(fault_config=init_config, exclude=exclude)
         injector = FaultInjector(injector_config)
