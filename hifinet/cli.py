@@ -56,9 +56,11 @@ def inject(
         list[int] | None, typer.Option(help="Node to exclude from injection")
     ] = None,
     seed: Annotated[int | None, typer.Option(help="Random seed to set")] = None,
-    fault_json: Annotated[
+    fault_config: Annotated[
         str | None,
-        typer.Option("--fault-config", help="Json string for fault type params"),
+        typer.Option(
+            help="Json string or path to Json file for fault type params",
+        ),
     ] = None,
     verbose: Annotated[
         bool, typer.Option("--verbose", "-v", help="Show debugging information")
@@ -84,10 +86,19 @@ def inject(
             for name, params in DEFAULT_CONFIG_MAPPING.items()
         }
 
-        if fault_json:
-            fault_config = json.loads(fault_json)
-            for fault_name, cli_overide in fault_config.items():
-                config = {**init_config[fault_name].model_dump(), **cli_overide}
+        if fault_config:
+            try:
+                path = Path(fault_config)
+                if path.is_file():
+                    with path.open() as f:
+                        config_override = json.load(f)
+                else:
+                    config_override = json.loads(fault_config)
+            except (OSError, json.JSONDecodeError) as e:
+                raise typer.BadParameter(f"Invalid fault config: {e}") from e
+
+            for fault_name, override in config_override.items():
+                config = {**init_config[fault_name].model_dump(), **override}
                 init_config[fault_name] = CONFIG_CLASS_MAPPING[fault_name](**config)
 
         injector_config = InjectorConfig(fault_config=init_config, exclude=exclude)
