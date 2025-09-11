@@ -23,12 +23,8 @@ DEFAULT_CONFIG = AdaptorConfig(
 
 
 class IntelAdaptor(BaseAdaptor):
-    def __init__(self, config: AdaptorConfig = DEFAULT_CONFIG):
-        super().__init__(config)
-
     def read(self) -> pd.DataFrame:
-        logger.debug(f"Current adaptor config: {self.config}")
-        logger.info(f"Reading data at path {self.config.path}")
+        super().read()
         columns = [
             "date",
             "time",

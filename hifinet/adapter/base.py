@@ -14,6 +14,8 @@ class BaseAdaptor(ABC):
 
     @abstractmethod
     def read(self) -> pd.DataFrame:
+        logger.debug(f"Current adaptor config: {self.config}")
+        logger.info(f"Reading data at path {self.config.path}")
         pass
 
     def process(self, data: pd.DataFrame) -> pd.DataFrame:
