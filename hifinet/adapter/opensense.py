@@ -19,6 +19,7 @@ class OSAdaptor(BaseAdaptor):
         with open(self.config.path) as json_file:
             row = {}
             data = json.load(json_file)
+            row["day"] = int(day)
             row["id"] = int(data["x"] + data["y"])
             row["type"] = int(data["fault"])
             row["feature_1"] = [float(i) for i in data["data"][0]]
