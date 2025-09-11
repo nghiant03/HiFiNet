@@ -6,8 +6,9 @@ from pandera.errors import SchemaErrors
 
 from hifinet.adapter.base import DataSchema
 from hifinet.adapter.intel import IntelAdaptor
+from hifinet.adapter.opensense import OSAdaptor
 
-ADAPTORS = {"intel": IntelAdaptor}
+ADAPTORS = {"intel": IntelAdaptor, "opensense": OSAdaptor}
 
 
 def load_data(dataset: str):
