@@ -16,14 +16,15 @@ class TimeSeriesFeatureExtractor(BaseEstimator, TransformerMixin):
     def transform(self, x, y=None):
         long_data = x.explode(self.sequence_columns).reset_index(drop=True)
         for c in self.sequence_columns:
-            long_data[c] = pd.to_numeric(long_data[c], errors='coerce')
+            long_data[c] = pd.to_numeric(long_data[c], errors="coerce")
 
         features = extract_features(
             long_data,
-            column_id="id",
+            column_id="seq_id",
             default_fc_parameters=self.fc_parameters,
             n_jobs=2
         )
+
         features = impute(features)
         return features
 

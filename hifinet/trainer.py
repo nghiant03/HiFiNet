@@ -33,9 +33,12 @@ class Trainer:
                 logger.error(f"Model {model_name} not implemented")
                 raise NotImplementedError
 
-        columns = self.sequence_columns + ["id"]
-        x = self.train_data[columns]
-        y = self.train_data["type"]
+        instance_data = self.train_data.copy()
+        instance_data["seq_idx"] = instance_data.groupby("id").cumcount()
+        instance_data["seq_id"] = instance_data["id"].astype(str) + "_" + instance_data["seq_idx"].astype(str)
+        columns = self.sequence_columns + ["seq_id"]
+        x = instance_data[columns]
+        y = instance_data["type"]
 
         self.model.fit(x, y)
 
