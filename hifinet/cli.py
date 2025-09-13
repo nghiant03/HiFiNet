@@ -131,10 +131,10 @@ def train(
     train_data, val_data, test_data = split(data, int(temp))
     feature_extractor = FeatureExtractor()
 
-    train_data = feature_extractor.fit_transform(train_data, train_data["type"])
-    val_data = feature_extractor.transform(val_data)
+    x_train = feature_extractor.fit_transform(train_data, train_data["type"])
+    x_val = feature_extractor.transform(val_data)
+    x_test = feature_extractor.transform(test_data)
 
-    test_data = feature_extractor.transform(test_data)
     trainer = Trainer(train_data, val_data, test_data)
     accuracy = trainer.train(model_name)
     logger.info(f"Accuracy score: {accuracy}")

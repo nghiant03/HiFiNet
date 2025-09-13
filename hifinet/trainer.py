@@ -1,7 +1,5 @@
-import re
 from typing import Any
 
-import pandas as pd
 from loguru import logger
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
@@ -9,15 +7,14 @@ from sklearn.metrics import accuracy_score
 
 class Trainer:
     def __init__(
-        self, train_data: pd.DataFrame, val_data: pd.DataFrame, test_data: pd.DataFrame
+        self, x_train: Any, y_train: Any, x_val: Any, y_val: Any, x_test: Any, y_test: Any
     ):
-        self.train_data, self.val_data, self.test_data = train_data, val_data, test_data
-        self.sequence_columns = [
-            column
-            for column in self.train_data.columns
-            if re.match(r"feature_*", column)
-        ]
-        self.sequence_columns.append("target")
+        self.x_train = x_train
+        self.y_train = y_train
+        self.x_val = x_val
+        self.y_val = y_val
+        self.x_test = x_test
+        self.y_test = y_test
 
     def train(self, model_name: str, model_params: dict[str, Any] | None = None):
         logger.info(f"Training {model_name}")
@@ -33,14 +30,8 @@ class Trainer:
                 logger.error(f"Model {model_name} not implemented")
                 raise NotImplementedError
 
-        columns = self.sequence_columns + ["seq_id"]
-        x_train = self.train_data[columns]
-        y_train = self.train_data["type"]
+        self.model.fit(self.x_train, self.y_train)
 
-        self.model.fit(x_train, y_train)
+        val_pred = self.model.predict(self.x_val)
 
-        x_val = self.val_data[columns]
-        y_val = self.val_data["type"]
-        val_pred = self.model.predict(x_val)
-
-        return accuracy_score(y_val, val_pred)
+        return accuracy_score(self.y_val, val_pred)
