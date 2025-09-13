@@ -1,13 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 import numpy as np
 import pandas as pd
 from loguru import logger
 from numpy.typing import NDArray
 
+TTarget = TypeVar("TTarget")
 
-class BaseFault[TTarget](ABC):
+class BaseFault(ABC, Generic[TTarget]):
     def __init__(self, chance: float, seed: int):
         self.chance = chance
         self._rng = np.random.default_rng(seed)

@@ -5,24 +5,23 @@ description = "The central package for HiFiNet"
 authors = [
     {name = "Nguyen Tri Nghia", email = "nghiant@mailbox.org"},
 ]
-dependencies = [
-	"pandas>=2.3.2",
-	"numpy>=2.3.3",
-	"typer>=0.17.4",
-	"loguru>=0.7.3",
-	"pydantic>=2.11.7",
-	"pandera>=0.26.1",
-	"scikit-learn>=1.7.2"
-]
-requires-python = "==3.12.*"
+requires-python = "==3.10.*"
 readme = "README.md"
 license = "MIT"
+dependencies = [
+	"tsfresh>=0.21.1", 
+	"numpy>=2.2.6", 
+	"typer>=0.17.4", 
+	"loguru>=0.7.3", 
+	"scikit-learn>=1.7.2", 
+	"pandera>=0.26.1", 
+	"pydantic>=2.11.8", 
+	"pandas>=2.3.2"
+]
 
 [dependency-groups]
-lint = [
-	"ruff"
-]
-lsp = [
+dev = [
+	"ruff",
 	"pandas-stubs"
 ]
 
