@@ -11,7 +11,11 @@ DEFAULT_CONFIG = AdaptorConfig(
     path=DEFAULT_PATH,
 )
 
+
 class OSAdaptor(BaseAdaptor):
+    def __init__(self, config: AdaptorConfig | None = None):
+        config = config or DEFAULT_CONFIG
+        super().__init__(config)
     def read(self) -> pd.DataFrame:
         super().read()
 
@@ -19,13 +23,16 @@ class OSAdaptor(BaseAdaptor):
         with open(self.config.path) as json_file:
             row = {}
             data = json.load(json_file)
-            row["day"] = int(day)
-            row["id"] = int(data["x"] + data["y"])
-            row["type"] = int(data["fault"])
-            row["feature_1"] = [float(i) for i in data["data"][0]]
-            row["feature_2"] = [float(i) for i in data["data"][1]]
-            row["target"] = [float(i) for i in data["data"][2]]
+            for obj in data:
+                row["datetime"] = pd.Timestamp(2023, 1, 1) + pd.to_timedelta(
+                    int(obj["day"]) - 1, "D"
+                )
+                row["id"] = int(obj["x"] + obj["y"])
+                row["type"] = int(obj["fault"])
+                row["feature_1"] = [float(i) for i in obj["data"][0]]
+                row["feature_2"] = [float(i) for i in obj["data"][1]]
+                row["target"] = [float(i) for i in obj["data"][2]]
 
-            record.append(row)
+                record.append(row)
 
         return pd.DataFrame(record)

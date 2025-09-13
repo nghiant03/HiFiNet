@@ -23,6 +23,10 @@ DEFAULT_CONFIG = AdaptorConfig(
 
 
 class IntelAdaptor(BaseAdaptor):
+    def __init__(self, config: AdaptorConfig | None = None):
+        config = config or DEFAULT_CONFIG
+        super().__init__(config)
+        
     def read(self) -> pd.DataFrame:
         super().read()
         columns = [
