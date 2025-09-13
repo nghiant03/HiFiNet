@@ -1,3 +1,5 @@
+import re
+
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -6,21 +8,21 @@ from tsfresh import extract_features, extract_relevant_features
 from tsfresh.utilities.dataframe_functions import impute
 
 
-class TimeSeriesFeatureExtractor(BaseEstimator, TransformerMixin):
+class FeatureExtractor(BaseEstimator, TransformerMixin):
     def __init__(
         self,
-        sequence_columns: list[str],
         fc_parameters: dict[str, dict] | None = None,
     ):
-        self.sequence_columns = sequence_columns
         self.fc_parameters = fc_parameters
 
     def _to_long(self, x: pd.DataFrame) -> pd.DataFrame:
-        df = x[["seq_id"] + self.sequence_columns].copy()
+        sequence_columns = [column for column in x.columns if re.match(r"feature_*", column)]
+        sequence_columns.append("target")
+        df = x[["seq_id"] + sequence_columns].copy()
 
         df = df.melt(
             id_vars="seq_id",
-            value_vars=self.sequence_columns,
+            value_vars=sequence_columns,
             var_name="kind",
             value_name="value",
         )
@@ -43,7 +45,7 @@ class TimeSeriesFeatureExtractor(BaseEstimator, TransformerMixin):
             column_kind="kind",
             column_value="value",
             default_fc_parameters=self.fc_parameters,
-            n_jobs=2,
+            n_jobs=16,
         )
 
         self.selected_columns_ = feats.columns.tolist()
@@ -60,7 +62,7 @@ class TimeSeriesFeatureExtractor(BaseEstimator, TransformerMixin):
             column_kind="kind",
             column_value="value",
             default_fc_parameters=self.fc_parameters,
-            n_jobs=2,
+            n_jobs=16,
         )
         impute(feats_all)
 
