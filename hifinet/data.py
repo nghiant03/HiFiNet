@@ -45,7 +45,7 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
             column_kind="kind",
             column_value="value",
             default_fc_parameters=self.fc_parameters,
-            n_jobs=16,
+            n_jobs=8,
         )
 
         self.selected_columns_ = feats.columns.tolist()
@@ -62,7 +62,7 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
             column_kind="kind",
             column_value="value",
             default_fc_parameters=self.fc_parameters,
-            n_jobs=16,
+            n_jobs=8,
         )
         impute(feats_all)
 

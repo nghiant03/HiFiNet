@@ -25,9 +25,9 @@ class Trainer:
             case "random_forest":
                 if model_params:
                     self.model = (
-                        RandomForestClassifier(**model_params)
+                        RandomForestClassifier(n_jobs=8, **model_params)
                         if model_params
-                        else RandomForestClassifier()
+                        else RandomForestClassifier(n_jobs=8) 
                     )
             case _:
                 logger.error(f"Model {model_name} not implemented")
