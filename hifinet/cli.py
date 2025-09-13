@@ -137,8 +137,12 @@ def train(
     post_data.to_csv("post_train.csv")
     x_val = feature_extractor.transform(val_data)
     y_val = val_data["type"]
+    post_data = x_val.join(y_val)
+    post_data.to_csv("post_val.csv")
     x_test = feature_extractor.transform(test_data)
     y_test = test_data["type"]
+    post_data = x_test.join(y_test)
+    post_data.to_csv("post_test.csv")
 
     trainer = Trainer(x_train, y_train, x_val, y_val, x_test, y_test)
     accuracy = trainer.train(model_name)
