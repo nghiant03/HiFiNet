@@ -11,6 +11,7 @@ from rich.text import Text
 from hifinet.config import CONFIG_CLASS_MAPPING, DEFAULT_CONFIG_MAPPING, InjectorConfig
 from hifinet.fault import FaultInjector
 from hifinet.loader import load_data
+from hifinet.trainer import Trainer
 
 console = Console()
 
@@ -114,9 +115,19 @@ def inject(
     logger.info(f"Data write to {output_path}")
 
 
-@app.command()
-def train():
-    pass
+@app.command(help="Train model to detect faults")
+def train(
+    model_name: Annotated[str, typer.Argument(help="Name of model to train")],
+    temp: Annotated[str, typer.Argument()],
+    ratio: Annotated[float, typer.Argument(help="Ratio of training data to use")] = 0.8,
+    dataset: Annotated[
+        str,
+        typer.Argument(help="The name of a default dataset or path to custom dataset"),
+    ] = "opensense",
+):
+    data = load_data(dataset)
+    trainer = Trainer(data, ratio, int(temp))
+    trainer.train(model_name)
 
 
 if __name__ == "__main__":
