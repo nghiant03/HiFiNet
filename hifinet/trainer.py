@@ -8,10 +8,14 @@ from sklearn.metrics import accuracy_score
 
 
 class Trainer:
-    def __init__(self, train_data: pd.DataFrame, val_data: pd.DataFrame, test_data: pd.DataFrame):
+    def __init__(
+        self, train_data: pd.DataFrame, val_data: pd.DataFrame, test_data: pd.DataFrame
+    ):
         self.train_data, self.val_data, self.test_data = train_data, val_data, test_data
         self.sequence_columns = [
-            column for column in self.train_data.columns if re.match(r"feature_*", column)
+            column
+            for column in self.train_data.columns
+            if re.match(r"feature_*", column)
         ]
         self.sequence_columns.append("target")
 
@@ -20,7 +24,11 @@ class Trainer:
         match model_name:
             case "random_forest":
                 if model_params:
-                    self.model = RandomForestClassifier(**model_params) if model_params else RandomForestClassifier()
+                    self.model = (
+                        RandomForestClassifier(**model_params)
+                        if model_params
+                        else RandomForestClassifier()
+                    )
             case _:
                 logger.error(f"Model {model_name} not implemented")
                 raise NotImplementedError

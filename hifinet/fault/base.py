@@ -8,6 +8,7 @@ from numpy.typing import NDArray
 
 TTarget = TypeVar("TTarget")
 
+
 class BaseFault(ABC, Generic[TTarget]):
     def __init__(self, chance: float, seed: int):
         self.chance = chance

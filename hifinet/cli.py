@@ -132,5 +132,6 @@ def train(
     accuracy = trainer.train(model_name)
     logger.info(f"Accuracy score: {accuracy}")
 
+
 if __name__ == "__main__":
     app()

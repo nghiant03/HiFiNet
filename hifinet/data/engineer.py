@@ -64,7 +64,9 @@ class TimeSeriesFeatureExtractor(BaseEstimator, TransformerMixin):
         )
         impute(feats_all)
 
-        assert isinstance(feats_all, pd.DataFrame), f"Extractor return {type(feats_all)}, expected DataFrame"
+        assert isinstance(feats_all, pd.DataFrame), (
+            f"Extractor return {type(feats_all)}, expected DataFrame"
+        )
 
         feats_all = feats_all.reindex(columns=self.selected_columns_, fill_value=0)
 
