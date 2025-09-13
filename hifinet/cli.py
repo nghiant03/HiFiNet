@@ -133,6 +133,8 @@ def train(
 
     x_train = feature_extractor.fit_transform(train_data, train_data["type"])
     y_train = train_data["type"]
+    post_data = x_train.merge(y_train)
+    post_data.to_csv("post_train.csv")
     x_val = feature_extractor.transform(val_data)
     y_val = val_data["type"]
     x_test = feature_extractor.transform(test_data)
