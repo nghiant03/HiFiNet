@@ -9,6 +9,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.text import Text
 
 from hifinet.config import CONFIG_CLASS_MAPPING, DEFAULT_CONFIG_MAPPING, InjectorConfig
+from hifinet.data.split import split
 from hifinet.fault import FaultInjector
 from hifinet.loader import load_data
 from hifinet.trainer import Trainer
@@ -126,9 +127,10 @@ def train(
     ] = "opensense",
 ):
     data = load_data(dataset)
-    trainer = Trainer(data, ratio, int(temp))
-    trainer.train(model_name)
-
+    train_data, val_data, test_data = split(data, int(temp))
+    trainer = Trainer(train_data, val_data, test_data)
+    accuracy = trainer.train(model_name)
+    logger.info(f"Accuracy score: {accuracy}")
 
 if __name__ == "__main__":
     app()
