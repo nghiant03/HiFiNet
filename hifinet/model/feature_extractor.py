@@ -1,3 +1,4 @@
+import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from tsfresh import extract_features
 from tsfresh.utilities.dataframe_functions import impute
@@ -13,33 +14,17 @@ class TimeSeriesFeatureExtractor(BaseEstimator, TransformerMixin):
         self.fc_parameters = fc_parameters
 
     def transform(self, x, y=None):
-        if "day" in x.columns:
-            series_id = x["id"].astype(str) + "_" + x["day"].astype(str)
-        else:
-            series_id = x["id"].astype(str)
+        long_data = x.explode(self.sequence_columns).reset_index(drop=True)
+        for c in self.sequence_columns:
+            long_data[c] = pd.to_numeric(long_data[c], errors='coerce')
 
-        sample_ids = series_id.tolist()
-
-        ts_df = (
-            x.assign(id=series_id)[["id", *self.sequence_columns]]
-            .melt(id_vars="id", var_name="variable", value_name="value")
-            .explode("value")
-        )
-        ts_df["time"] = ts_df.groupby(["id", "variable"]).cumcount()
-        ts_df = ts_df[["id", "time", "value", "variable"]]
-
-        # Extract features using tsfresh
         features = extract_features(
-            ts_df,
+            long_data,
             column_id="id",
-            column_sort="time",
-            column_value="value",
-            column_kind="variable",
             default_fc_parameters=self.fc_parameters,
+            n_jobs=2
         )
         features = impute(features)
-        features = features.reindex(sample_ids)
-        features.index = x.index
         return features
 
     def fit(self, x, y=None):

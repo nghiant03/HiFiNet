@@ -21,13 +21,13 @@ class OSAdaptor(BaseAdaptor):
 
         record = []
         with open(self.config.path) as json_file:
-            row = {}
             data = json.load(json_file)
             for obj in data:
+                row = {}
                 row["datetime"] = pd.Timestamp(2023, 1, 1) + pd.to_timedelta(
                     int(obj["day"]) - 1, "D"
                 )
-                row["id"] = int(obj["x"] + obj["y"])
+                row["id"] = obj["x"] * 10 + obj["y"]
                 row["type"] = int(obj["fault"])
                 row["feature_1"] = [float(i) for i in obj["data"][0]]
                 row["feature_2"] = [float(i) for i in obj["data"][1]]
