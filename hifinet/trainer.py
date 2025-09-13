@@ -18,6 +18,7 @@ class Trainer:
         self.train_data, self.val_data, self.test_data = self._split(temp)
 
     def train(self, model_name: str, model_params: dict[str, Any] | None = None):
+        logger.info(f"Training {model_name}")
         match model_name:
             case "random_forest":
                 if model_params:
@@ -32,7 +33,8 @@ class Trainer:
                 logger.error(f"Model {model_name} not implemented")
                 raise NotImplementedError
 
-        x = self.train_data[self.sequence_columns]
+        columns = self.sequence_columns + ["id"]
+        x = self.train_data[columns]
         y = self.train_data["type"]
 
         self.model.fit(x, y)
