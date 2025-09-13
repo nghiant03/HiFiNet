@@ -73,3 +73,51 @@ class FeatureExtractor(BaseEstimator, TransformerMixin):
         feats_all = feats_all.reindex(columns=self.selected_columns_, fill_value=0)
 
         return feats_all.reindex(index=x["seq_id"].values)
+
+def split(data, temp):
+    match temp:
+        case 0:
+            return (
+                data[data["datetime"] < "2023-08-01"],
+                data[
+                    (data["datetime"] >= "2023-08-01")
+                    | (data["datetime"] < "2023-10-01")
+                ],
+                data[
+                    (data["datetime"] >= "2023-10-01")
+                    | (data["datetime"] < "2023-11-01")
+                ],
+            )
+        case 1:
+            return (
+                data[
+                    (data["datetime"] >= "2023-02-01")
+                    | (data["datetime"] < "2023-09-01")
+                ],
+                data[
+                    (data["datetime"] >= "2023-09-01")
+                    | (data["datetime"] < "2023-11-01")
+                ],
+                data[
+                    (data["datetime"] >= "2023-11-01")
+                    | (data["datetime"] < "2023-12-01")
+                ],
+            )
+        case 2:
+            return (
+                data[
+                    (data["datetime"] >= "2023-03-01")
+                    | (data["datetime"] < "2023-10-01")
+                ],
+                data[
+                    (data["datetime"] >= "2023-10-01")
+                    | (data["datetime"] < "2023-12-01")
+                ],
+                data[data["datetime"] >= "2023-12-03"],
+            )
+        case _:
+            raise NotImplementedError
+
+def format_data(data):
+    data["seq_idx"] = data.groupby("id").cumcount()
+    data["seq_id"] = data["id"].astype(str) + "_" + data["seq_idx"].astype(str)

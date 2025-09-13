@@ -9,7 +9,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.text import Text
 
 from hifinet.config import CONFIG_CLASS_MAPPING, DEFAULT_CONFIG_MAPPING, InjectorConfig
-from hifinet.data import FeatureExtractor, split
+from hifinet.data import FeatureExtractor, format_data, split
 from hifinet.fault import FaultInjector
 from hifinet.loader import load_data
 from hifinet.trainer import Trainer
@@ -127,6 +127,7 @@ def train(
     ] = "opensense",
 ):
     data = load_data(dataset)
+    data = format_data(data)
     train_data, val_data, test_data = split(data, int(temp))
     feature_extractor = FeatureExtractor()
 
