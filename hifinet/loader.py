@@ -7,16 +7,17 @@ from pandera.errors import SchemaErrors
 from hifinet.adapter.base import DataSchema
 from hifinet.adapter.intel import IntelAdaptor
 from hifinet.adapter.opensense import OSAdaptor
+from hifinet.config import AdaptorConfig
 
 ADAPTORS = {"intel": IntelAdaptor, "opensense": OSAdaptor}
 
 
-def load_data(dataset: str):
+def load_data(dataset: str, config: AdaptorConfig | None = None):
     logger.info(f"Loading {dataset} dataset")
 
     if dataset in ADAPTORS:
         logger.info(f"Using default {dataset} adapter.")
-        adaptor = ADAPTORS[dataset]()
+        adaptor = ADAPTORS[dataset](config) if config else ADAPTORS[dataset]()
         data = adaptor.read()
     else:
         dataset_path = Path(dataset)

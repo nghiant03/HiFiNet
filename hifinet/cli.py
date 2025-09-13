@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 from typing import Annotated
 
@@ -8,7 +9,12 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.text import Text
 
-from hifinet.config import CONFIG_CLASS_MAPPING, DEFAULT_CONFIG_MAPPING, InjectorConfig
+from hifinet.config import (
+    CONFIG_CLASS_MAPPING,
+    DEFAULT_CONFIG_MAPPING,
+    AdaptorConfig,
+    InjectorConfig,
+)
 from hifinet.data import FeatureExtractor, format_data, split
 from hifinet.fault import FaultInjector
 from hifinet.loader import load_data
@@ -120,13 +126,16 @@ def inject(
 def train(
     model_name: Annotated[str, typer.Argument(help="Name of model to train")],
     temp: Annotated[str, typer.Argument()],
-    ratio: Annotated[float, typer.Argument(help="Ratio of training data to use")] = 0.8,
+    path: Annotated[Path, typer.Argument()],
     dataset: Annotated[
         str,
         typer.Argument(help="The name of a default dataset or path to custom dataset"),
     ] = "opensense",
 ):
-    data = load_data(dataset)
+    adaptor_config = AdaptorConfig(path=Path(path))
+    data = load_data(dataset, adaptor_config)
+    num = re.search(r"(?<=0\.)\d+(?=\.json$)", path.as_posix())
+    num = num.group() if num else None
     data = format_data(data)
     train_data, val_data, test_data = split(data, int(temp))
     feature_extractor = FeatureExtractor()
@@ -134,19 +143,21 @@ def train(
     x_train = feature_extractor.fit_transform(train_data, train_data["type"])
     y_train = train_data["type"]
     post_data = x_train.join(y_train)
-    post_data.to_csv("post_train.csv")
+    post_data.to_csv("post_train_{num}_{temp}.csv")
     x_val = feature_extractor.transform(val_data)
     y_val = val_data["type"]
     post_data = x_val.join(y_val)
-    post_data.to_csv("post_val.csv")
+    post_data.to_csv("post_val_{num}_{temp}.csv")
     x_test = feature_extractor.transform(test_data)
     y_test = test_data["type"]
     post_data = x_test.join(y_test)
-    post_data.to_csv("post_test.csv")
+    post_data.to_csv("post_test_{num}_{temp}.csv")
 
     trainer = Trainer(x_train, y_train, x_val, y_val, x_test, y_test)
     accuracy = trainer.train(model_name)
     logger.info(f"Accuracy score: {accuracy}")
+    with open(f"accuracy_{num}_{temp}.txt", "w") as f:
+        f.write(f"Accuracy: \t{accuracy:.6f}")
 
 
 if __name__ == "__main__":
