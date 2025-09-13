@@ -12,7 +12,7 @@ class TimeSeriesFeatureExtractor(BaseEstimator, TransformerMixin):
     ):
         self.sequence_columns = sequence_columns
         self.fc_parameters = fc_parameters
-        
+
     def transform(self, x, y=None):
         ts_data = []
         sample_ids = []
@@ -34,7 +34,7 @@ class TimeSeriesFeatureExtractor(BaseEstimator, TransformerMixin):
                     )
 
         ts_df = pd.DataFrame(ts_data)
-        
+
         # Extract features using tsfresh
         features = extract_features(
             ts_df,
