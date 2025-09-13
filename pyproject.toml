@@ -21,8 +21,9 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-	"ruff",
-	"pandas-stubs"
+    "ruff",
+    "pandas-stubs",
+    "debugpy>=1.8.16",
 ]
 
 [tool.ruff.lint]

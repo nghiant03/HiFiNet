@@ -183,6 +183,23 @@ dependencies = [
 ]
 
 [[packages]]
+name = "debugpy"
+version = "1.8.16"
+requires-python = ">=3.8"
+sdist = {name = "debugpy-1.8.16.tar.gz", url = "https://files.pythonhosted.org/packages/ca/d4/722d0bcc7986172ac2ef3c979ad56a1030e3afd44ced136d45f8142b1f4a/debugpy-1.8.16.tar.gz", hashes = {sha256 = "31e69a1feb1cf6b51efbed3f6c9b0ef03bc46ff050679c4be7ea6d2e23540870"}}
+wheels = [
+    {name = "debugpy-1.8.16-cp310-cp310-macosx_14_0_x86_64.whl",url = "https://files.pythonhosted.org/packages/ce/fd/f1b75ebc61d90882595b81d808efd3573c082e1c3407850d9dccac4ae904/debugpy-1.8.16-cp310-cp310-macosx_14_0_x86_64.whl",hashes = {sha256 = "2a3958fb9c2f40ed8ea48a0d34895b461de57a1f9862e7478716c35d76f56c65"}},
+    {name = "debugpy-1.8.16-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",url = "https://files.pythonhosted.org/packages/df/5e/c5c1934352871128b30a1a144a58b5baa546e1b57bd47dbed788bad4431c/debugpy-1.8.16-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",hashes = {sha256 = "e5ca7314042e8a614cc2574cd71f6ccd7e13a9708ce3c6d8436959eae56f2378"}},
+    {name = "debugpy-1.8.16-cp310-cp310-win32.whl",url = "https://files.pythonhosted.org/packages/c9/d5/2ebe42377e5a78dc786afc25e61ee83c5628d63f32dfa41092597d52fe83/debugpy-1.8.16-cp310-cp310-win32.whl",hashes = {sha256 = "8624a6111dc312ed8c363347a0b59c5acc6210d897e41a7c069de3c53235c9a6"}},
+    {name = "debugpy-1.8.16-cp310-cp310-win_amd64.whl",url = "https://files.pythonhosted.org/packages/54/f8/e774ad16a60b9913213dbabb7472074c5a7b0d84f07c1f383040a9690057/debugpy-1.8.16-cp310-cp310-win_amd64.whl",hashes = {sha256 = "fee6db83ea5c978baf042440cfe29695e1a5d48a30147abf4c3be87513609817"}},
+    {name = "debugpy-1.8.16-py2.py3-none-any.whl",url = "https://files.pythonhosted.org/packages/52/57/ecc9ae29fa5b2d90107cd1d9bf8ed19aacb74b2264d986ae9d44fe9bdf87/debugpy-1.8.16-py2.py3-none-any.whl",hashes = {sha256 = "19c9521962475b87da6f673514f7fd610328757ec993bf7ec0d8c96f9a325f9e"}},
+]
+marker = "\"dev\" in dependency_groups"
+
+[packages.tool.pdm]
+dependencies = []
+
+[[packages]]
 name = "pandas-stubs"
 version = "2.3.2.250827"
 requires-python = ">=3.10"
@@ -816,7 +833,7 @@ dependencies = [
 ]
 
 [tool.pdm]
-hashes = {sha256 = "1d6580ba8f58fcf7b8d068d931faaaf0ed6b88577d0b9f0eb58ce8f02f50aea5"}
+hashes = {sha256 = "8739957d3c1259832fef88be3aae8a30e5fc0be8d31f6cd8cd17766d0dca0a44"}
 strategy = ["inherit_metadata", "static_urls"]
 
 [[tool.pdm.targets]]
