@@ -20,12 +20,11 @@ class Trainer:
         logger.info(f"Training {model_name}")
         match model_name:
             case "random_forest":
-                if model_params:
-                    self.model = (
-                        RandomForestClassifier(n_jobs=8, **model_params)
-                        if model_params
-                        else RandomForestClassifier(n_jobs=8) 
-                    )
+                self.model = (
+                    RandomForestClassifier(n_jobs=8, **model_params)
+                    if model_params
+                    else RandomForestClassifier(n_jobs=8) 
+                )
             case _:
                 logger.error(f"Model {model_name} not implemented")
                 raise NotImplementedError
