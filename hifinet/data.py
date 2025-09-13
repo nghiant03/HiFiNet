@@ -121,3 +121,4 @@ def split(data, temp):
 def format_data(data):
     data["seq_idx"] = data.groupby("id").cumcount()
     data["seq_id"] = data["id"].astype(str) + "_" + data["seq_idx"].astype(str)
+    return data
